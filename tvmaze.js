@@ -42,8 +42,6 @@ async function searchShows(query) {
       "https://www.nicepng.com/png/detail/767-7677499_mandy-pinned-naomi-again-hannibal-buress-thats-wack.png";
     } else {
       showObj.image = searchResult[i].show.image.medium;
-
-
     };
     
     resultArray.push(showObj);
@@ -70,8 +68,10 @@ function populateShows(shows) {
       `<div class="col-md-6 col-lg-3 Show" data-show-id="${show.id}">
          <div class="card" data-show-id="${show.id}">
            <div class="card-body">
+           <img class="card-img-top" src="${show.image}">
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
+             
            </div>
          </div>
        </div>
