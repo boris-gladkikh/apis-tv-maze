@@ -18,17 +18,41 @@
       }
  */
 async function searchShows(query) {
+  let searchUrl = "http://api.tvmaze.com/search/shows?";
+  let $searchValue = $("#search-query").val();
+
+
+
   // TODO: Make an ajax request to the searchShows api.  Remove
   // hard coded data.
+  let response = await axios.get(searchUrl,{params:{
+    q: $searchValue
+  }});
+  let searchResult = response.data;
+  console.log("search result", searchResult);
+  let resultArray = [];
 
-  return [
-    {
-      id: 1767,
-      name: "The Bletchley Circle",
-      summary: "<p><b>The Bletchley Circle</b> follows the journey of four ordinary women with extraordinary skills that helped to end World War II.</p><p>Set in 1952, Susan, Millie, Lucy and Jean have returned to their normal lives, modestly setting aside the part they played in producing crucial intelligence, which helped the Allies to victory and shortened the war. When Susan discovers a hidden code behind an unsolved murder she is met by skepticism from the police. She quickly realises she can only begin to crack the murders and bring the culprit to justice with her former friends.</p>",
-      image: "http://static.tvmaze.com/uploads/images/medium_portrait/147/369403.jpg"
-    }
-  ]
+  for (let i = 0; i < searchResult.length; i++) {
+    let showObj = {};
+    showObj.id = searchResult[i].show.id;
+    showObj.name = searchResult[i].show.name;
+    showObj.summary = searchResult[i].show.summary;
+    if (searchResult[i].show.image === null) {
+      showObj.image = 
+      "https://www.nicepng.com/png/detail/767-7677499_mandy-pinned-naomi-again-hannibal-buress-thats-wack.png";
+    } else {
+      showObj.image = searchResult[i].show.image.medium;
+
+
+    };
+    
+    resultArray.push(showObj);
+
+  }
+  console.log("this is our lovely array", resultArray)
+
+  return resultArray;
+   
 }
 
 
