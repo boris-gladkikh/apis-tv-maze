@@ -46,7 +46,7 @@ async function searchShows(query) {
     resultArray.push(showObj);
 
   }
-  console.log("this is our lovely array", resultArray);
+  console.log("this is our lovely show results array", resultArray);
 
   return resultArray;
    
@@ -68,14 +68,18 @@ function populateShows(shows) {
          <div class="card" data-show-id="${show.id}">
            <div class="card-body">
            <img class="card-img-top" src="${show.image}">
-           <button class="episodes" data-show-id="${show.id}">Episodes</button>
+           <button class="episodes" value="${show.id}">Episodes</button>
            <p class="card-text">${show.summary}</p>
          </div>
        </div>
      </div>
     `);
-    $('.episodes').on("click", async function () {
-      populateEpisodes(await getEpisodes(show.id));
+    // let currentEpisodeButton = $(`button[data-show-id=${show.id}]`);
+    // console.log(currentEpisodeButton);
+    $('button.episodes').on("click", async function (event) {
+      let id = event.target.value;
+      console.log(id);
+      populateEpisodes(await getEpisodes(id));
     })
     $showsList.append($item);
   }
