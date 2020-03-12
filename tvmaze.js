@@ -21,8 +21,6 @@ async function searchShows(query) {
   let searchUrl = "http://api.tvmaze.com/search/shows?";
   let $searchValue = $("#search-query").val();
 
-
-
   // TODO: Make an ajax request to the searchShows api.  Remove
   // hard coded data.
   let response = await axios.get(searchUrl,{params:{
@@ -34,20 +32,21 @@ async function searchShows(query) {
 
   for (let i = 0; i < searchResult.length; i++) {
     let showObj = {};
-    showObj.id = searchResult[i].show.id;
-    showObj.name = searchResult[i].show.name;
-    showObj.summary = searchResult[i].show.summary;
+    let {id, name, summary} = searchResult[i].show;
+    let image;
     if (searchResult[i].show.image === null) {
-      showObj.image = 
+      image = 
       "https://www.nicepng.com/png/detail/767-7677499_mandy-pinned-naomi-again-hannibal-buress-thats-wack.png";
     } else {
-      showObj.image = searchResult[i].show.image.medium;
+      image = searchResult[i].show.image.medium;
     };
+
+    showObj = {id, name, summary, image};
     
     resultArray.push(showObj);
 
   }
-  console.log("this is our lovely array", resultArray)
+  console.log("this is our lovely array", resultArray);
 
   return resultArray;
    
@@ -75,8 +74,10 @@ function populateShows(shows) {
        </div>
      </div>
     `);
-    $('.episodes').on("click", getEpisodes(show.id));
-  $showsList.append($item);
+    $('.episodes').on("click", async function () {
+      populateEpisodes(await getEpisodes(show.id));
+    })
+    $showsList.append($item);
   }
 }
 
@@ -115,25 +116,35 @@ async function getEpisodes(id) {
   let searchURL = `http://api.tvmaze.com/shows/${id}/episodes`
   let response = await axios.get(searchURL);
   console.log("our episodes response is", response);
+  let searchResult = response.data;
+  console.log("search result", searchResult);
+  let episodesArray = [];
+
+  for (let i = 0; i < searchResult.length; i++) {
+    let episodesObj = {};
+    let {id, name, season, number} = searchResult[i];
+
+    episodesObj = {id, name, season, number};
+    
+    episodesArray.push(episodesObj);
+
+  }
+  console.log("this is our lovely episodes array", episodesArray);
+
+  return episodesArray;
+
 }
 
-function populateEpisodes(shows) {
-  const $showsList = $("#shows-list");
-  $showsList.empty();
+function populateEpisodes(episodes) {
+  console.log("success!", episodes);
+  const $episodesList = $("#episodes-list");
+  $episodesList.empty();
 
-  for (let show of shows) {
+  for (let episode of episodes) {
     let $item = $(
-      `<div class="col-md-6 col-lg-3 Show" data-show-id="${show.id}">
-         <div class="card" data-show-id="${show.id}">
-           <div class="card-body">
-           <img class="card-img-top" src="${show.image}">
-           <button class="episodes" data-show-id="${show.id}">Episodes</button>
-           <p class="card-text">${show.summary}</p>
-         </div>
-       </div>
-     </div>
-    `);
-  $showsList.append($item);
-  $('.episodes').on("click", getEpisodes);
+      `<li data-episode-id=$"{episode.id}">${episode.name} (season ${episode.season}, number ${episode.number})</li>`
+      );
+    $episodesList.append($item);
+    $("#episodes-area").show();
   }
 }
